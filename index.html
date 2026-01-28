@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Eduplay</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #eef2f3;
+  padding: 20px;
+}
+h1 { color: #2c3e50; }
+button {
+  padding: 10px 15px;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+input {
+  padding: 8px;
+  margin: 5px;
+}
+#game {
+  margin-top: 20px;
+}
+.card {
+  display: inline-block;
+  width: 150px;
+  height: 70px;
+  margin: 10px;
+  line-height: 70px;
+  background: white;
+  border: 2px solid #34495e;
+  cursor: pointer;
+  user-select: none;
+}
+.hidden {
+  background: #34495e;
+  color: #34495e;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧪 Eduplay</h1>
+<p>Potrivește conceptele corecte</p>
+
+<button onclick="loadPreset()">Joacă set chimie (liceu)</button>
+<button onclick="showCustom()">Creează propriul joc</button>
+
+<div id="custom" style="display:none;">
+  <h3>Introdu perechile tale</h3>
+  <input id="a" placeholder="Concept">
+  <input id="b" placeholder="Definiție / asociere">
+  <br>
+  <button onclick="addPair()">Adaugă pereche</button>
+  <button onclick="startGame()">Start joc</button>
+</div>
+
+<div id="game"></div>
+
+<script>
+let pairs = [];
+let cards = [];
+let firstCard = null;
+
+// Set implicit chimie liceu
+function loadPreset() {
+  pairs = [
+    "Oxidare", "Pierdere de electroni",
+    "Reducere", "Câștig de electroni",
+    "Acid", "pH < 7",
+    "Bază", "pH > 7",
+    "Legătură ionică", "Transfer de electroni",
+    "Legătură covalentă", "Punere în comun de electroni",
+    "NaCl", "Clorură de sodiu",
+    "H₂SO₄", "Acid sulfuric"
+  ];
+  startGame();
+}
+
+function showCustom() {
+  pairs = [];
+  document.getElementById("custom").style.display = "block";
+  document.getElementById("game").innerHTML = "";
+}
+
+function addPair() {
+  const a = document.getElementById("a").value;
+  const b = document.getElementById("b").value;
+  if (a && b) {
+    pairs.push(a, b);
+    document.getElementById("a").value = "";
+    document.getElementById("b").value = "";
+  }
+}
+
+function startGame() {
+  cards = [...pairs].sort(() => Math.random() - 0.5);
+  document.getElementById("game").innerHTML = "";
+  cards.forEach(text => {
+    const card = document.createElement("div");
+    card.className = "card hidden";
+    card.innerText = text;
+    card.onclick = () => flip(card);
+    document.getElementById("game").appendChild(card);
+  });
+}
+
+function flip(card) {
+  if (!card.classList.contains("hidden")) return;
+  card.classList.remove("hidden");
+
+  if (!firstCard) {
+    firstCard = card;
+  } else {
+    if (firstCard.innerText === card.innerText) {
+      firstCard = null;
+    } else {
+      setTimeout(() => {
+        card.classList.add("hidden");
+        firstCard.classList.add("hidden");
+        firstCard = null;
+      }, 800);
+    }
+  }
+}
+</script>
+
+</body>
+</html>
